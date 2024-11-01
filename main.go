@@ -1,15 +1,11 @@
+/*
+Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+
+*/
 package main
 
-import (
-	"net/http"
-
-	"github.com/lab42/404/templates"
-	"github.com/labstack/echo/v4"
-)
+import "github.com/lab42/404/cmd"
 
 func main() {
-	e := echo.New()
-	e.HideBanner = true
-	e.GET("/*", echo.WrapHandler(http.FileServer(http.FS(templates.FS))))
-	e.Logger.Fatal(e.Start(":1234"))
+	cmd.Execute()
 }
