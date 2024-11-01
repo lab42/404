@@ -1,20 +1,11 @@
 # Setup
-FROM alpine as setup
-RUN addgroup --system appgroup --gid 1111 && \
-    adduser -S appuser --ingroup appgroup --uid 1111
+FROM alpine:3.20 as setup
+RUN addgroup --gid 10000 -S appgroup && \
+    adduser --uid 10000 -S appuser -G appgroup
 
-# Development image
-FROM busybox as nginx-default-backend-dbg
+FROM scratch
 COPY --from=setup /etc/passwd /etc/passwd
-COPY nginx-default-backend /bin/
+COPY 404 /404
 USER appuser
 EXPOSE 1234
-ENTRYPOINT ["/bin/nginx-default-backend"]
-
-# Production image
-FROM scratch as nginx-default-backend
-COPY --from=setup /etc/passwd /etc/passwd
-COPY nginx-default-backend /bin/
-USER appuser
-EXPOSE 1234
-ENTRYPOINT ["/bin/nginx-default-backend"]
+ENTRYPOINT ["/404"]

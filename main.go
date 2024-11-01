@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/lab42/nginx-default-backend/templates"
+	"github.com/lab42/404/templates"
 	"github.com/labstack/echo/v4"
 )
 
