@@ -1,0 +1,51 @@
+project_name: "nginx-default-backend"
+before:
+  hooks:
+  - go mod tidy
+  - go generate ./...
+builds:
+- env:
+  - CGO_ENABLED=0
+  goos:
+  - linux
+  - darwin
+  goarch:
+  - amd64
+  flags:
+  - -a
+  ldflags:
+  - -extldflags "-static" -s -w
+  hooks:
+    post:
+    - upx --brute "{{ .Path }}"
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+dockers:
+- image_templates:
+  - ghcr.io/lab42/nginx-default-backend:v{{.Version}}-debug
+  use: buildx
+  build_flag_templates:
+  - "--label=org.opencontainers.image.created={{.Date}}"
+  - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+  - "--label=org.opencontainers.image.version={{.Version}}"
+  - "--label=org.opencontainers.image.source=https://github.com/lab42/nginx-default-backend"
+  - "--label=org.opencontainers.image.description/nginx-default-backend"
+  - "--target=nginx-default-backend-dbg"
+- image_templates:
+  - ghcr.io/lab42/nginx-default-backend:v{{.Version}}
+  use: buildx
+  build_flag_templates:
+  - "--label=org.opencontainers.image.created={{.Date}}"
+  - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+  - "--label=org.opencontainers.image.version={{.Version}}"
+  - "--label=org.opencontainers.image.source https://github.com/lab42/nginx-default-backend"
+  - "--label=org.opencontainers.image.description/nginx-default-backend"
+  - "--target=nginx-default-backend"
